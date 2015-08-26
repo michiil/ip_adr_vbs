@@ -30,6 +30,7 @@ Function autoproxy(switch)
   'Bit je nach Option beschreiben (9 = an; 1 = aus)
   If switch = "on" Then
     regArray(8) = 9
+  ElseIf switch = "off" Then
     regArray(8) = 1
   Else
     MsgBox "Funktion falsch aufgerufen. (Wert " & switch & ")",0,"IP-Adresse"
