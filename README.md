@@ -5,5 +5,10 @@ Diverse VBS Scripts.
 
 **IP-Adresse.vbs**
 
-VBS Script um die eine/mehrere fixe IP's einzustellen und die automatische 
+VB Script um die eine/mehrere fixe IP's einzustellen und die automatische 
 Proxykonfiguration zu aktivieren/deativieren.
+
+**Bremse_Excel.vbs**
+
+VB Script um das beim Bremsentest generierte Programm in Excel einzulesen,
+die Ungenauigkeit zu berechen und zu formatieren.
