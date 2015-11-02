@@ -1,6 +1,6 @@
 Version = "1.00"
 
-url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
+url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/Bremse_Excel.vbs"
 Set req = CreateObject("Msxml2.XMLHttp.6.0")
 req.open "GET", url, False
 req.send
@@ -20,7 +20,7 @@ If req.Status = 200 Then
   End If
 End If
 
-Set objFSO = CreateObject("Scripting.FileSystemObject") 
+Set objFSO = CreateObject("Scripting.FileSystemObject")
 Set objTextFile = objFSO.OpenTextFile (WScript.Arguments.Item(0) , 1)
 Set objExcel = CreateObject("Excel.Application")
 objExcel.Visible = True
