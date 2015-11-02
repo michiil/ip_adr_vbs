@@ -1,5 +1,23 @@
-'IP-Adresse Script
-'Michi Lehenauer 20.08.2015
+Version = "1.00"
+
+url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
+Set req = CreateObject("Msxml2.XMLHttp.6.0")
+req.open "GET", url, False
+req.send
+If req.Status = 200 Then
+  ArrGit = Split(req.responseText, vbLf)
+  MyOwn = Wscript.ScriptFullName
+  Set FSO = CreateObject("Scripting.FileSystemObject")
+  Set oFile = FSO.OpenTextFile(MyOwn, 1) '1 = For Reading
+  ArrLocal = Split(oFile.ReadAll, vbCrLf)
+  oFile.Close
+  If ArrGit(0) <> ArrLocal(0) Then
+    Set oFile = FSO.OpenTextFile(MyOwn, 2) '2 = For Writing
+    oFile.Write (Join(ArrGit, vbCrLf))
+    oFile.Close
+    MsgBox "Update durchgefuehrt! Bitte neu starten."
+  End If
+End If
 
 'Variablen definieren
 Dim Adapter, text, Adapternr, n, found, aproxy, regArray, switch, IP, SubNM
