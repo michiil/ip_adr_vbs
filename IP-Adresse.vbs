@@ -82,7 +82,7 @@ Function netzadapt()
     Set objTextFile = objFSO.OpenTextFile(MyOwn, 1)
     ArrAllText = Split(objTextFile.ReadAll, vbCrLf)
     objTextFile.Close
-    ArrAllText(6) = "Adapter = """ & AdapterArray((Adapternr-1)) & """"
+    ArrAllText(25) = "Adapter = """ & AdapterArray((Adapternr-1)) & """"
     Set objTextFile = objFSO.OpenTextFile(MyOwn, 2)
     objTextFile.Write (Join(ArrAllText, vbCrLf))
     objTextFile.Close
