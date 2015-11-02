@@ -7,14 +7,14 @@ req.send
 If req.Status = 200 Then
   ArrGit = Split(req.responseText, vbLf)
   MyOwn = Wscript.ScriptFullName
-  Set FSO = CreateObject("Scripting.FileSystemObject")
-  Set oFile = FSO.OpenTextFile(MyOwn, 1) '1 = For Reading
-  ArrLocal = Split(oFile.ReadAll, vbCrLf)
-  oFile.Close
+  Set objFSO = CreateObject("Scripting.FileSystemObject")
+  Set objTextFile = objFSO.OpenTextFile(MyOwn, 1) '1 = For Reading
+  ArrLocal = Split(objTextFile.ReadAll, vbCrLf)
+  objTextFile.Close
   If ArrGit(0) <> ArrLocal(0) Then
-    Set oFile = FSO.OpenTextFile(MyOwn, 2) '2 = For Writing
-    oFile.Write (Join(ArrGit, vbCrLf))
-    oFile.Close
+    Set objTextFile = objFSO.OpenTextFile(MyOwn, 2) '2 = For Writing
+    objTextFile.Write (Join(ArrGit, vbCrLf))
+    objTextFile.Close
     MsgBox "Update durchgefuehrt! Bitte neu starten."
     WScript.Quit
   End If
@@ -78,17 +78,14 @@ Function netzadapt()
   Else
     'Neuen Adapter in das Script schreiben
     MyOwn = Wscript.ScriptFullName
-    Set FSO = CreateObject("Scripting.FileSystemObject")
-    Set oFile = FSO.OpenTextFile(MyOwn, 1)
-    ArrAllText = Split(oFile.ReadAll, vbCrLf)
-    oFile.Close
-    Set oFile = Nothing
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+    Set objTextFile = objFSO.OpenTextFile(MyOwn, 1)
+    ArrAllText = Split(objTextFile.ReadAll, vbCrLf)
+    objTextFile.Close
     ArrAllText(6) = "Adapter = """ & AdapterArray((Adapternr-1)) & """"
-    Set oFile = FSO.OpenTextFile(MyOwn, 2)
-    oFile.Write (Join(ArrAllText, vbCrLf))
-    oFile.Close
-    Set oFile = Nothing
-    Set FSO = Nothing
+    Set objTextFile = objFSO.OpenTextFile(MyOwn, 2)
+    objTextFile.Write (Join(ArrAllText, vbCrLf))
+    objTextFile.Close
   End if
   MsgBox "Adapter wurde geaendert",0,"IP-Adresse"
 End Function
