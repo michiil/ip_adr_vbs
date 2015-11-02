@@ -16,6 +16,7 @@ If req.Status = 200 Then
     oFile.Write (Join(ArrGit, vbCrLf))
     oFile.Close
     MsgBox "Update durchgefuehrt! Bitte neu starten."
+    WScript.Quit
   End If
 End If
 
