@@ -21,7 +21,7 @@ If req.Status = 200 Then
 End If
 
 If WScript.Arguments.Count = 0 Then
-  MsgBox "Zum starten bitte eine Datei auf das Scipt ziehen."
+  MsgBox "Zum starten bitte eine Datei auf das Script ziehen."
   WScript.Quit
 End If
 
