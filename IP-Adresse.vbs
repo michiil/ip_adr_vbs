@@ -104,7 +104,8 @@ if found = true then
 	"      (automatische Proykonfiguration deaktiviert)"&VbCRLF&_
 	"4 = Manuell (feste IP)"&VbCRLF&_
 	"5 = Netzwerkadapter aendern"&VbCRLF&_
-	"      (aktuell = " & Adapter & ")","IP-Adresse")
+	"      (aktuell = " & Adapter & ")"&VbCRLF&_
+  "9 = Info","IP-Adresse")
 	Select Case Input
 	Case "1"
     'Automatische Proxy konfiguration aktivieren
@@ -158,6 +159,9 @@ if found = true then
 	Case "5"
 		'Netzwerkadapter aendern.
     call netzadapt()
+  Case "9"
+  	'Info
+    MsgBox "IP-Adressen Script by Michi Lehenauer" & vbCrLf & "Version " & Version
 	Case ""
 		MsgBox "Abgebrochen!",0,"IP-Adresse"
 	Case else
