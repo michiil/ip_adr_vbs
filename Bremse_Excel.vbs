@@ -20,6 +20,11 @@ If req.Status = 200 Then
   End If
 End If
 
+If WScript.Arguments.Count = 0 Then
+  MsgBox "Zum starten bitte eine Datei auf das Scipt ziehen."
+  WScript.Quit
+End If
+
 Set objFSO = CreateObject("Scripting.FileSystemObject")
 Set objTextFile = objFSO.OpenTextFile (WScript.Arguments.Item(0) , 1)
 Set objExcel = CreateObject("Excel.Application")
