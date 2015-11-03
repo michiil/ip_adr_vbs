@@ -1,4 +1,4 @@
-Version = "1.03"
+Version = "1.04"
 On Error Resume Next
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/WZV-Excel.vbs"
 Set req = CreateObject("Msxml2.XMLHttp.6.0")
@@ -30,6 +30,7 @@ Set objTextFile = objFSO.OpenTextFile (WScript.Arguments.Item(0) , 1)
 Set objExcel = CreateObject("Excel.Application")
 objExcel.Visible = True
 objExcel.Workbooks.Add
+objExcel.ScreenUpdating = False
 n = 0
 Do Until objTextFile.AtEndOfStream
     strLine = objTextFile.Readline
@@ -41,5 +42,6 @@ Do Until objTextFile.AtEndOfStream
 Loop
 
 objExcel.Columns("A:D").HorizontalAlignment = -4131 'links
+objExcel.ScreenUpdating = True
 
 'Konstanten: http://woonjas.linuxnerd.org/web/download.nsf/files/8C6C00FB633BCDC0C1256F39001D899E/$file/msoffice_constants.txt
