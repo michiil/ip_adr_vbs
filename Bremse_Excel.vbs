@@ -1,11 +1,11 @@
-Version = "1.04"
+Version = "1.05"
 On Error Resume Next
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/Bremse_Excel.vbs"
-Set req = CreateObject("Msxml2.XMLHttp.6.0")
-req.open "GET", url, False
-req.send
-If req.Status = 200 Then
-  ArrGit = Split(req.responseText, vbLf)
+Set objReq = CreateObject("Msxml2.XMLHttp.6.0")
+objReq.open "GET", url, False
+objReq.send
+If objReq.Status = 200 Then
+  ArrGit = Split(objReq.responseText, vbLf)
   MyOwn = Wscript.ScriptFullName
   Set objFSO = CreateObject("Scripting.FileSystemObject")
   Set objTextFile = objFSO.OpenTextFile(MyOwn, 1) '1 = For Reading
