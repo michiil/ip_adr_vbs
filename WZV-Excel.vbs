@@ -1,5 +1,5 @@
-Version = "1.00"
-
+Version = "1.01"
+On Error Resume Next
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/WZV-Excel.vbs"
 Set req = CreateObject("Msxml2.XMLHttp.6.0")
 req.open "GET", url, False
