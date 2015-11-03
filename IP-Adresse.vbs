@@ -1,5 +1,5 @@
 Version = "1.01"
-
+On Error Resume Next
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
 Set req = CreateObject("Msxml2.XMLHttp.6.0")
 req.open "GET", url, False
@@ -41,7 +41,7 @@ End With
 'Funktion zum Ein- und ausschalten der automatischen Proxykonfiguration
 Function autoproxy(switch)
   'Key auslesen und in Array schreiben (&H80000001 = Konstante fuer HKEY_CURRENT_USER)
-  objReg.GetBinaryValue &H80000001, Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections, "DefaultConnectionSettings", regArray
+  objReg.GetBinaryValue &H80000001, "Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections", "DefaultConnectionSettings", regArray
   'Bit je nach Option beschreiben (9 = an; 1 = aus)
   If switch = "on" Then
     regArray(8) = 9
@@ -51,7 +51,7 @@ Function autoproxy(switch)
     MsgBox "Funktion falsch aufgerufen. (Wert " & switch & ")",0,"IP-Adresse"
   End If
   'Key zurueck in die Reg schreiben (&H80000001 = Konstante fuer HKEY_CURRENT_USER)
-  objReg.SetBinaryValue &H80000001, Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections, "DefaultConnectionSettings", regArray
+  objReg.SetBinaryValue &H80000001, "Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections", "DefaultConnectionSettings", regArray
 End Function
 'Netzwerkadapter auslesen
 For Each objItem in colItems
