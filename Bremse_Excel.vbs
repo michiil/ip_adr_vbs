@@ -1,4 +1,4 @@
-Version = "1.02"
+Version = "1.03"
 On Error Resume Next
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/Bremse_Excel.vbs"
 Set req = CreateObject("Msxml2.XMLHttp.6.0")
@@ -37,7 +37,7 @@ Do Until objTextFile.AtEndOfStream
     strLine = objTextFile.Readline
     arrtext = Split(strLine , ";")
     For i = 0 to Ubound(arrtext)
-    objExcel.Cells((n + 1), (i + 1)).Value = arrtext(i)
+      objExcel.Cells((n + 1), (i + 1)).Value = arrtext(i)
     Next
   n = n + 1
 Loop
