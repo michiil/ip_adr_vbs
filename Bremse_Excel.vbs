@@ -1,4 +1,4 @@
-Version = "1.01"
+Version = "1.02"
 On Error Resume Next
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/Bremse_Excel.vbs"
 Set req = CreateObject("Msxml2.XMLHttp.6.0")
@@ -37,23 +37,23 @@ Do Until objTextFile.AtEndOfStream
     strLine = objTextFile.Readline
     arrtext = Split(strLine , ";")
     For i = 0 to Ubound(arrtext)
-		objExcel.Cells((n + 1), (i + 1)).Value = arrtext(i)
+    objExcel.Cells((n + 1), (i + 1)).Value = arrtext(i)
     Next
-	n = n + 1
+  n = n + 1
 Loop
 
 objExcel.Range("A19").Value = "Abweichung"
 For each letter in arrspalten
-	objExcel.Range(letter & "19").Formula = "=MAX(ABS(MIN(" & letter & "7:" & letter & "18)),MAX(" & letter & "7:" & letter & "18))"
+  objExcel.Range(letter & "19").Formula = "=MAX(ABS(MIN(" & letter & "7:" & letter & "18)),MAX(" & letter & "7:" & letter & "18))"
 Next
 objExcel.Range("A19:F19").Font.Bold = True
 
 If objExcel.Range("A21").Value <> "" then
-	objExcel.Range("A35").Value = "Abweichung"
-	For each letter in arrspalten
-	objExcel.Range(letter & "35").Formula = "=MAX(ABS(MIN(" & letter & "23:" & letter & "34)),MAX(" & letter & "23:" & letter & "34))"
-	Next
-	objExcel.Range("A35:F35").Font.Bold = True
+  objExcel.Range("A35").Value = "Abweichung"
+  For each letter in arrspalten
+  objExcel.Range(letter & "35").Formula = "=MAX(ABS(MIN(" & letter & "23:" & letter & "34)),MAX(" & letter & "23:" & letter & "34))"
+  Next
+  objExcel.Range("A35:F35").Font.Bold = True
 End If
 
 objExcel.Columns("A:F").EntireColumn.AutoFit

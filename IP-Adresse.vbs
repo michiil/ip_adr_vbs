@@ -1,4 +1,4 @@
-Version = "1.01"
+Version = "1.02"
 On Error Resume Next
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
 Set req = CreateObject("Msxml2.XMLHttp.6.0")
@@ -55,10 +55,10 @@ Function autoproxy(switch)
 End Function
 'Netzwerkadapter auslesen
 For Each objItem in colItems
-	If Len(objItem.NetConnectionID) Then
+  If Len(objItem.NetConnectionID) Then
     ReDim Preserve AdapterArray (UBound(AdapterArray) + 1)
     AdapterArray(UBound(AdapterArray)) = objItem.NetConnectionID
-	End If
+  End If
 Next
 'Funktion fuer Netzwerkadapter auswahl.
 Function netzadapt()
@@ -92,80 +92,80 @@ for n = 0 to ubound(AdapterArray)
     end if
 next
 if found = true then
-	'Eingabe Box
-	Input=InputBox("Was soll gemacht werden?" & VbCRLF & VbCRLF & _
-	"1 = DHCP (Firmennetz, Siemens -X127)" & VbCRLF & _
-	"2 = Div feste IP's (Fanuc, MCU)" & VbCRLF & _
-	"3 = Langer & Laumann Tuerautomatik" & VbCRLF & _
-	"      (automatische Proykonfiguration deaktiviert)" & VbCRLF & _
-	"4 = Manuell (feste IP)" & VbCRLF & _
-	"5 = Netzwerkadapter aendern" & VbCRLF & _
-	"      (aktuell = " & Adapter & ")" & VbCRLF & _
+  'Eingabe Box
+  Input=InputBox("Was soll gemacht werden?" & VbCRLF & VbCRLF & _
+  "1 = DHCP (Firmennetz, Siemens -X127)" & VbCRLF & _
+  "2 = Div feste IP's (Fanuc, MCU)" & VbCRLF & _
+  "3 = Langer & Laumann Tuerautomatik" & VbCRLF & _
+  "      (automatische Proykonfiguration deaktiviert)" & VbCRLF & _
+  "4 = Manuell (feste IP)" & VbCRLF & _
+  "5 = Netzwerkadapter aendern" & VbCRLF & _
+  "      (aktuell = " & Adapter & ")" & VbCRLF & _
   "9 = Info","IP-Adresse")
-	Select Case Input
-	Case "1" 'DHCP
+  Select Case Input
+  Case "1" 'DHCP
     'Automatische Proxy konfiguration aktivieren
     call autoproxy("on")
-		'DHCP aktivieren
-		objShell.Run "netsh interface ipv4 set address " & Adapter & " dhcp", 0, True
-		MsgBox "DHCP Eingestellt und automatische Proxykonfiguration aktiviert.",0,"IP-Adresse"
-	Case "2" 'Diverse Feste IP's setzen
-		objShell.Run "netsh interface ipv4 set address " & Adapter & " static 192.168.100.20 255.255.255.0", 0, True
-		objShell.Run "netsh interface ipv4 add address " & Adapter & " 193.46.5.183 255.255.255.0", 0, True
-		objShell.Run "netsh interface ipv4 add address " & Adapter & " 193.46.6.183 255.255.255.0", 0, True
-		objShell.Run "netsh interface ipv4 add address " & Adapter & " 192.168.0.2 255.255.255.0", 0, True
-		MsgBox "Folgende IP Adressen wurden festgelegt:" & VbCRLF & VbCRLF & _
+    'DHCP aktivieren
+    objShell.Run "netsh interface ipv4 set address " & Adapter & " dhcp", 0, True
+    MsgBox "DHCP Eingestellt und automatische Proxykonfiguration aktiviert.",0,"IP-Adresse"
+  Case "2" 'Diverse Feste IP's setzen
+    objShell.Run "netsh interface ipv4 set address " & Adapter & " static 192.168.100.20 255.255.255.0", 0, True
+    objShell.Run "netsh interface ipv4 add address " & Adapter & " 193.46.5.183 255.255.255.0", 0, True
+    objShell.Run "netsh interface ipv4 add address " & Adapter & " 193.46.6.183 255.255.255.0", 0, True
+    objShell.Run "netsh interface ipv4 add address " & Adapter & " 192.168.0.2 255.255.255.0", 0, True
+    MsgBox "Folgende IP Adressen wurden festgelegt:" & VbCRLF & VbCRLF & _
     "192.168.100.20 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
     "193.46.5.183 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
     "193.46.6.183 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
     "192.168.0.2 255.255.255.0 (Visualisierung MCU)",0,"IP-Adresse"
-	Case "3" 'Langer & Laumann Tuerautomatik
-		'Automatische Proxy konfiguration deaktivieren
+  Case "3" 'Langer & Laumann Tuerautomatik
+    'Automatische Proxy konfiguration deaktivieren
     call autoproxy("off")
-		'Feste IP's setzen
-		objShell.Run "netsh interface ipv4 set address " & Adapter & " static 172.16.1.151 255.255.255.0", 0, True
-		MsgBox "Die IP fuer die Tuerautomaktik wurde festgelegt und die automatische Proxykonfiguration wurde deaktiviert."&VbCRLF&_
+    'Feste IP's setzen
+    objShell.Run "netsh interface ipv4 set address " & Adapter & " static 172.16.1.151 255.255.255.0", 0, True
+    MsgBox "Die IP fuer die Tuerautomaktik wurde festgelegt und die automatische Proxykonfiguration wurde deaktiviert."&VbCRLF&_
     "Das Webinterface wird jetzt gestartet.",0,"IP-Adresse"
     'InternetExplorer starten und zum Webinterface navigieren.
     objIE.Visible = 1
     objIE.Navigate "http://172.16.1.150/"
-	Case "4" 'Manuelle IP
-		'Eingabe Boxen
-		IP=InputBox("IP Eingeben:" &  VbCRLF & VbCRLF & _
-		"z.B. 193.46.8.53","IP-Adresse")
-		If ipregex.Test( IP ) Then
-			SubNM=InputBox("Subnetzmaske Eingeben:" & VbCRLF & VbCRLF & _
-			"z.B. 255.255.255.0","IP-Adresse","255.255.255.0")
-			If ipregex.Test( SubNM ) Then
-				aproxy=MsgBox("Soll die automatische Proxykonfiguration deaktiviert werden?",4,"IP-Adresse")
-				If aproxy = "6" Then
-				  call autoproxy("off")
-				End If
-				'Manuelle IP setzen
-				objShell.Run "netsh interface ipv4 set address " & Adapter & " static " & IP & " " & SUBMN, 0, True
-				If aproxy = "6" Then
-				  MsgBox "Die IP " & IP & " und die Subnetzmaske " & SubNM & " wurden festgelegt und die automatische Proxykonfiguration wurde deaktiviert.",0,"IP-Adresse"
-				Else
-				  MsgBox "Die IP " & IP & " und die Subnetzmaske " & SubNM & " wurden festgelegt.",0,"IP-Adresse"
-				End If
-			Else
-				MsgBox "Ungueltige Subnetzmaske!",0,"IP-Adresse"
-			End If
-		Else
-			MsgBox "Ungueltige IP!",0,"IP-Adresse"
-		End If
-	Case "5" 'Netzwerkadapter aendern.
+  Case "4" 'Manuelle IP
+    'Eingabe Boxen
+    IP=InputBox("IP Eingeben:" &  VbCRLF & VbCRLF & _
+    "z.B. 193.46.8.53","IP-Adresse")
+    If ipregex.Test( IP ) Then
+      SubNM=InputBox("Subnetzmaske Eingeben:" & VbCRLF & VbCRLF & _
+      "z.B. 255.255.255.0","IP-Adresse","255.255.255.0")
+      If ipregex.Test( SubNM ) Then
+        aproxy=MsgBox("Soll die automatische Proxykonfiguration deaktiviert werden?",4,"IP-Adresse")
+        If aproxy = "6" Then
+          call autoproxy("off")
+        End If
+        'Manuelle IP setzen
+        objShell.Run "netsh interface ipv4 set address " & Adapter & " static " & IP & " " & SUBMN, 0, True
+        If aproxy = "6" Then
+          MsgBox "Die IP " & IP & " und die Subnetzmaske " & SubNM & " wurden festgelegt und die automatische Proxykonfiguration wurde deaktiviert.",0,"IP-Adresse"
+        Else
+          MsgBox "Die IP " & IP & " und die Subnetzmaske " & SubNM & " wurden festgelegt.",0,"IP-Adresse"
+        End If
+      Else
+        MsgBox "Ungueltige Subnetzmaske!",0,"IP-Adresse"
+      End If
+    Else
+      MsgBox "Ungueltige IP!",0,"IP-Adresse"
+    End If
+  Case "5" 'Netzwerkadapter aendern.
     call netzadapt()
   Case "9" 'Info
     MsgBox "IP-Adressen Script by Michi Lehenauer" & vbCrLf & "Version " & Version
-	Case ""
-		MsgBox "Abgebrochen!",0,"IP-Adresse"
-	Case else
+  Case ""
+    MsgBox "Abgebrochen!",0,"IP-Adresse"
+  Case else
     MsgBox "Ungueltige Eingabe!",0,"IP-Adresse"
-	End Select
+  End Select
 else
   MsgBox "Der gewaelte Adapter """ & Adapter & """ existiert nicht! Bitte neuen waehlen.",0,"IP-Adresse"
-	call netzadapt()
+  call netzadapt()
 End If
 
 WScript.Quit
