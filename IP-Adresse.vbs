@@ -1,4 +1,4 @@
-Version = "1.00"
+Version = "1.01"
 
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
 Set req = CreateObject("Msxml2.XMLHttp.6.0")
@@ -22,30 +22,26 @@ End If
 
 'Variablen definieren
 Dim Adapter, text, Adapternr, n, found, aproxy, regArray, switch, IP, SubNM
-strComputer = "." ' . = lokaler pc
 Adapter = "LAN-Verbindung"
-const HKEY_CURRENT_USER = &H80000001
-strKeyPath = "Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections"
-'Array definieren und Laenge setzen (kein Dim noetig)
-ReDim AdapterArray(-1)
+'Dynamischen Array mit Länge 0 definieren
+ReDim AdapterArray(0)
 'Funktionen setzen
-Set re = New RegExp
-Set objIE = CreateObject("InternetExplorer.Application") 'InternetExplorer um da Langer&Laumann Webinterface zu starten.
-Set objReg = GetObject("winmgmts:{impersonationLevel=impersonate}!\\" & strComputer & "\root\default:StdRegProv") 'Fuer regedit
+Set ipregex = New RegExp
+Set objIE = CreateObject("InternetExplorer.Application") 'InternetExplorer um das Langer&Laumann Webinterface zu starten.
+Set objReg = GetObject("winmgmts:{impersonationLevel=impersonate}!\\.\root\default:StdRegProv") 'Fuer regedit
 Set objShell = WScript.CreateObject("WScript.Shell") 'CMD Shell
-Set objWMIService = GetObject("winmgmts:" _
-   & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")
-Set colItems = objWMIService.ExecQuery("Select * from Win32_NetworkAdapter")
-'Rexex Funktion definieren.
-With re
+Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2") 'Netzwerkadapter auslesen
+Set colItems = objWMIService.ExecQuery("Select * from Win32_NetworkAdapter") 'Netzwerkadapter auslesen
+'Rexex fuer IP ueberpruefung definieren.
+With ipregex
   .Pattern    = "^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
   .IgnoreCase = False
   .Global     = False
 End With
-'Regedit Funktion (Ein- und ausschalten der automatischen Proxykonfiguration)
+'Funktion zum Ein- und ausschalten der automatischen Proxykonfiguration
 Function autoproxy(switch)
-  'Key auslesen und in Array schreiben
-  objReg.GetBinaryValue HKEY_CURRENT_USER, strKeyPath, "DefaultConnectionSettings", regArray
+  'Key auslesen und in Array schreiben (&H80000001 = Konstante fuer HKEY_CURRENT_USER)
+  objReg.GetBinaryValue &H80000001, Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections, "DefaultConnectionSettings", regArray
   'Bit je nach Option beschreiben (9 = an; 1 = aus)
   If switch = "on" Then
     regArray(8) = 9
@@ -54,26 +50,26 @@ Function autoproxy(switch)
   Else
     MsgBox "Funktion falsch aufgerufen. (Wert " & switch & ")",0,"IP-Adresse"
   End If
-  'Key zurueck in die Reg schreiben
-  objReg.SetBinaryValue HKEY_CURRENT_USER, strKeyPath, "DefaultConnectionSettings", regArray
+  'Key zurueck in die Reg schreiben (&H80000001 = Konstante fuer HKEY_CURRENT_USER)
+  objReg.SetBinaryValue &H80000001, Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections, "DefaultConnectionSettings", regArray
 End Function
 'Netzwerkadapter auslesen
 For Each objItem in colItems
 	If Len(objItem.NetConnectionID) Then
-		ReDim Preserve AdapterArray (UBound(AdapterArray) + 1)
-		AdapterArray(UBound(AdapterArray)) = objItem.NetConnectionID
+    ReDim Preserve AdapterArray (UBound(AdapterArray) + 1)
+    AdapterArray(UBound(AdapterArray)) = objItem.NetConnectionID
 	End If
 Next
 'Funktion fuer Netzwerkadapter auswahl.
 Function netzadapt()
   'Netzwerkadapter in Array schreiben
-  for n = 0 to ubound(AdapterArray)
-    text = text & (n + 1) & " = " & AdapterArray(n) & VbCrLf
+  for n = 1 to ubound(AdapterArray)
+    text = text & n & " = " & AdapterArray(n) & VbCrLf
   Next
   'Eingabe Box
   Adapternr=InputBox("Adapter waehlen:" & VbCrLf & VbCrLf & text,"IP-Adresse")
   'Eingabe pruefen
-  If (CInt(Adapternr) > CInt(UBound(AdapterArray) + 1)) OR (CInt(Adapternr) < 1) Then
+  If (CInt(Adapternr) > CInt(UBound(AdapterArray))) OR (CInt(Adapternr) < 1) Then
     MsgBox "Ungueltige Eingabe!",0,"IP-Adresse"
   Else
     'Neuen Adapter in das Script schreiben
@@ -82,12 +78,12 @@ Function netzadapt()
     Set objTextFile = objFSO.OpenTextFile(MyOwn, 1)
     ArrAllText = Split(objTextFile.ReadAll, vbCrLf)
     objTextFile.Close
-    ArrAllText(25) = "Adapter = """ & AdapterArray((Adapternr-1)) & """"
+    ArrAllText(24) = "Adapter = """ & AdapterArray(Adapternr) & """"
     Set objTextFile = objFSO.OpenTextFile(MyOwn, 2)
     objTextFile.Write (Join(ArrAllText, vbCrLf))
     objTextFile.Close
+    MsgBox "Adapter wurde auf " & AdapterArray(Adapternr) & " geaendert",0,"IP-Adresse"
   End if
-  MsgBox "Adapter wurde geaendert",0,"IP-Adresse"
 End Function
 'Pruefen ob momentan gewaelter Adapter existiert
 for n = 0 to ubound(AdapterArray)
@@ -97,30 +93,33 @@ for n = 0 to ubound(AdapterArray)
 next
 if found = true then
 	'Eingabe Box
-	Input=InputBox("Was soll gemacht werden?"&VbCRLF&VbCRLF&_
-	"1 = DHCP (Firmennetz, Siemens -X127)"&VbCRLF&_
-	"2 = Div feste IP's (Fanuc, MCU)"&VbCRLF&_
-	"3 = Langer & Laumann Tuerautomatik"&VbCRLF&_
-	"      (automatische Proykonfiguration deaktiviert)"&VbCRLF&_
-	"4 = Manuell (feste IP)"&VbCRLF&_
-	"5 = Netzwerkadapter aendern"&VbCRLF&_
-	"      (aktuell = " & Adapter & ")"&VbCRLF&_
+	Input=InputBox("Was soll gemacht werden?" & VbCRLF & VbCRLF & _
+	"1 = DHCP (Firmennetz, Siemens -X127)" & VbCRLF & _
+	"2 = Div feste IP's (Fanuc, MCU)" & VbCRLF & _
+	"3 = Langer & Laumann Tuerautomatik" & VbCRLF & _
+	"      (automatische Proykonfiguration deaktiviert)" & VbCRLF & _
+	"4 = Manuell (feste IP)" & VbCRLF & _
+	"5 = Netzwerkadapter aendern" & VbCRLF & _
+	"      (aktuell = " & Adapter & ")" & VbCRLF & _
   "9 = Info","IP-Adresse")
 	Select Case Input
-	Case "1"
+	Case "1" 'DHCP
     'Automatische Proxy konfiguration aktivieren
     call autoproxy("on")
 		'DHCP aktivieren
 		objShell.Run "netsh interface ipv4 set address " & Adapter & " dhcp", 0, True
 		MsgBox "DHCP Eingestellt und automatische Proxykonfiguration aktiviert.",0,"IP-Adresse"
-	Case "2"
-		'Diverse Feste IP's setzen
+	Case "2" 'Diverse Feste IP's setzen
 		objShell.Run "netsh interface ipv4 set address " & Adapter & " static 192.168.100.20 255.255.255.0", 0, True
 		objShell.Run "netsh interface ipv4 add address " & Adapter & " 193.46.5.183 255.255.255.0", 0, True
 		objShell.Run "netsh interface ipv4 add address " & Adapter & " 193.46.6.183 255.255.255.0", 0, True
 		objShell.Run "netsh interface ipv4 add address " & Adapter & " 192.168.0.2 255.255.255.0", 0, True
-		MsgBox "Diverse fixe IP Adressen wurden festgelegt.",0,"IP-Adresse"
-	Case "3"
+		MsgBox "Folgende IP Adressen wurden festgelegt:" & VbCRLF & VbCRLF & _
+    "192.168.100.20 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
+    "193.46.5.183 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
+    "193.46.6.183 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
+    "192.168.0.2 255.255.255.0 (Visualisierung MCU)",0,"IP-Adresse"
+	Case "3" 'Langer & Laumann Tuerautomatik
 		'Automatische Proxy konfiguration deaktivieren
     call autoproxy("off")
 		'Feste IP's setzen
@@ -130,15 +129,14 @@ if found = true then
     'InternetExplorer starten und zum Webinterface navigieren.
     objIE.Visible = 1
     objIE.Navigate "http://172.16.1.150/"
-	Case "4"
-    'Manuelle IP
+	Case "4" 'Manuelle IP
 		'Eingabe Boxen
-		IP=InputBox("IP Eingeben:"&VbCRLF&VbCRLF&_
+		IP=InputBox("IP Eingeben:" &  VbCRLF & VbCRLF & _
 		"z.B. 193.46.8.53","IP-Adresse")
-		If re.Test( IP ) Then
-			SubNM=InputBox("Subnetzmaske Eingeben:"&VbCRLF&VbCRLF&_
+		If ipregex.Test( IP ) Then
+			SubNM=InputBox("Subnetzmaske Eingeben:" & VbCRLF & VbCRLF & _
 			"z.B. 255.255.255.0","IP-Adresse","255.255.255.0")
-			If re.Test( SubNM ) Then
+			If ipregex.Test( SubNM ) Then
 				aproxy=MsgBox("Soll die automatische Proxykonfiguration deaktiviert werden?",4,"IP-Adresse")
 				If aproxy = "6" Then
 				  call autoproxy("off")
@@ -156,11 +154,9 @@ if found = true then
 		Else
 			MsgBox "Ungueltige IP!",0,"IP-Adresse"
 		End If
-	Case "5"
-		'Netzwerkadapter aendern.
+	Case "5" 'Netzwerkadapter aendern.
     call netzadapt()
-  Case "9"
-  	'Info
+  Case "9" 'Info
     MsgBox "IP-Adressen Script by Michi Lehenauer" & vbCrLf & "Version " & Version
 	Case ""
 		MsgBox "Abgebrochen!",0,"IP-Adresse"
