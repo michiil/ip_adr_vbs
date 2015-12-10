@@ -1,5 +1,5 @@
 Version = "1.05"
-'V1.04 Automatische Proxykonfiguration in Ruhe lassen, funktioniert in der Firma nicht mehr.
+'V1.05 Automatische Proxykonfiguration in Ruhe lassen, funktioniert in der Firma nicht mehr.
 On Error Resume Next
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
 Set objReq = CreateObject("Msxml2.XMLHttp.6.0")
