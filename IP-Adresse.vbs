@@ -1,4 +1,4 @@
-Version = "1.04"
+Version = "1.05"
 'V1.04 Automatische Proxykonfiguration in Ruhe lassen, funktioniert in der Firma nicht mehr.
 On Error Resume Next
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
@@ -83,7 +83,6 @@ if found = true then
   "1 = DHCP (Firmennetz, Siemens -X127)" & VbCRLF & _
   "2 = Div feste IP's (Fanuc, MCU)" & VbCRLF & _
   "3 = Langer & Laumann Tuerautomatik" & VbCRLF & _
-  "      (automatische Proykonfiguration deaktiviert)" & VbCRLF & _
   "4 = Manuell (feste IP)" & VbCRLF & _
   "5 = Netzwerkadapter aendern" & VbCRLF & _
   "      (aktuell = " & Adapter & ")" & VbCRLF & _
