@@ -24,7 +24,7 @@ End If
 'Variablen definieren
 Dim Adapter, text, Adapternr, n, found, regArray, switch, IP, SubNM
 Adapter = "LAN-Verbindung"
-'Dynamischen Array mit L�nge 0 definieren
+'Dynamischen Array mit Laenge 0 definieren
 ReDim AdapterArray(0)
 'Funktionen setzen
 Set ipregex = New RegExp
@@ -64,7 +64,7 @@ Function netzadapt()
     Set objTextFile = objFSO.OpenTextFile(MyOwn, 1)
     ArrAllText = Split(objTextFile.ReadAll, vbCrLf)
     objTextFile.Close
-    ArrAllText(24) = "Adapter = """ & AdapterArray(Adapternr) & """"
+    ArrAllText(25) = "Adapter = """ & AdapterArray(Adapternr) & """"
     Set objTextFile = objFSO.OpenTextFile(MyOwn, 2)
     objTextFile.Write (Join(ArrAllText, vbCrLf))
     objTextFile.Close
