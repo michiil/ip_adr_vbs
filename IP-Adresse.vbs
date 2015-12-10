@@ -1,4 +1,5 @@
-Version = "1.03"
+Version = "1.04"
+'V1.04 Automatische Proxykonfiguration in Ruhe lassen, funktioniert in der Firma nicht mehr.
 On Error Resume Next
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
 Set objReq = CreateObject("Msxml2.XMLHttp.6.0")
@@ -15,15 +16,15 @@ If objReq.Status = 200 Then
     Set objTextFile = objFSO.OpenTextFile(MyOwn, 2) '2 = For Writing
     objTextFile.Write (Join(ArrGit, vbCrLf))
     objTextFile.Close
-    MsgBox "Update durchgefuehrt! Bitte neu starten."
+    MsgBox "Update durchgefuehrt! Bitte neu starten." & VbCRLF & ArrGit(1)
     WScript.Quit
   End If
 End If
 
 'Variablen definieren
-Dim Adapter, text, Adapternr, n, found, aproxy, regArray, switch, IP, SubNM
+Dim Adapter, text, Adapternr, n, found, regArray, switch, IP, SubNM
 Adapter = "LAN-Verbindung"
-'Dynamischen Array mit Länge 0 definieren
+'Dynamischen Array mit L�nge 0 definieren
 ReDim AdapterArray(0)
 'Funktionen setzen
 Set ipregex = New RegExp
@@ -38,21 +39,6 @@ With ipregex
   .IgnoreCase = False
   .Global     = False
 End With
-'Funktion zum Ein- und ausschalten der automatischen Proxykonfiguration
-Function autoproxy(switch)
-  'Key auslesen und in Array schreiben (&H80000001 = Konstante fuer HKEY_CURRENT_USER)
-  objReg.GetBinaryValue &H80000001, "Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections", "DefaultConnectionSettings", regArray
-  'Bit je nach Option beschreiben (9 = an; 1 = aus)
-  If switch = "on" Then
-    regArray(8) = 9
-  ElseIf switch = "off" Then
-    regArray(8) = 1
-  Else
-    MsgBox "Funktion falsch aufgerufen. (Wert " & switch & ")",0,"IP-Adresse"
-  End If
-  'Key zurueck in die Reg schreiben (&H80000001 = Konstante fuer HKEY_CURRENT_USER)
-  objReg.SetBinaryValue &H80000001, "Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections", "DefaultConnectionSettings", regArray
-End Function
 'Netzwerkadapter auslesen
 For Each objItem in colItems
   If Len(objItem.NetConnectionID) Then
@@ -104,11 +90,9 @@ if found = true then
   "9 = Info","IP-Adresse")
   Select Case Input
   Case "1" 'DHCP
-    'Automatische Proxy konfiguration aktivieren
-    call autoproxy("on")
     'DHCP aktivieren
     objShell.Run "netsh interface ipv4 set address " & Adapter & " dhcp", 0, True
-    MsgBox "DHCP Eingestellt und automatische Proxykonfiguration aktiviert.",0,"IP-Adresse"
+    MsgBox "DHCP Eingestellt.",0,"IP-Adresse"
   Case "2" 'Diverse Feste IP's setzen
     objShell.Run "netsh interface ipv4 set address " & Adapter & " static 192.168.100.20 255.255.255.0", 0, True
     objShell.Run "netsh interface ipv4 add address " & Adapter & " 193.46.5.183 255.255.255.0", 0, True
@@ -120,12 +104,10 @@ if found = true then
     "193.46.6.183 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
     "192.168.0.2 255.255.255.0 (Visualisierung MCU)",0,"IP-Adresse"
   Case "3" 'Langer & Laumann Tuerautomatik
-    'Automatische Proxy konfiguration deaktivieren
-    call autoproxy("off")
     'Feste IP's setzen
     objShell.Run "netsh interface ipv4 set address " & Adapter & " static 172.16.1.151 255.255.255.0", 0, True
-    MsgBox "Die IP fuer die Tuerautomaktik wurde festgelegt und die automatische Proxykonfiguration wurde deaktiviert."&VbCRLF&_
-    "Das Webinterface wird jetzt gestartet.",0,"IP-Adresse"
+    MsgBox "Die IP fuer die Tuerautomaktik wurde festgelegt."&VbCRLF&_
+    "Das Webinterface wird jetzt gestartet. Eventuell muessen noch die Proxyeinstellungen angepasst werden.",0,"IP-Adresse"
     'InternetExplorer starten und zum Webinterface navigieren.
     objIE.Visible = 1
     objIE.Navigate "http://172.16.1.150/"
@@ -137,17 +119,9 @@ if found = true then
       SubNM=InputBox("Subnetzmaske Eingeben:" & VbCRLF & VbCRLF & _
       "z.B. 255.255.255.0","IP-Adresse","255.255.255.0")
       If ipregex.Test( SubNM ) Then
-        aproxy=MsgBox("Soll die automatische Proxykonfiguration deaktiviert werden?",4,"IP-Adresse")
-        If aproxy = "6" Then
-          call autoproxy("off")
-        End If
         'Manuelle IP setzen
         objShell.Run "netsh interface ipv4 set address " & Adapter & " static " & IP & " " & SUBMN, 0, True
-        If aproxy = "6" Then
-          MsgBox "Die IP " & IP & " und die Subnetzmaske " & SubNM & " wurden festgelegt und die automatische Proxykonfiguration wurde deaktiviert.",0,"IP-Adresse"
-        Else
-          MsgBox "Die IP " & IP & " und die Subnetzmaske " & SubNM & " wurden festgelegt.",0,"IP-Adresse"
-        End If
+        MsgBox "Die IP " & IP & " und die Subnetzmaske " & SubNM & " wurden festgelegt.",0,"IP-Adresse"
       Else
         MsgBox "Ungueltige Subnetzmaske!",0,"IP-Adresse"
       End If
