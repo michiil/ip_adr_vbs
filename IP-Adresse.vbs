@@ -1,5 +1,5 @@
-Version = "1.05"
-'V1.05 Automatische Proxykonfiguration in Ruhe lassen, funktioniert in der Firma nicht mehr.
+Version = "1.06"
+'V1.06 Netzwerkadapter in Anführungszeichen setzten.
 On Error Resume Next
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
 Set objReq = CreateObject("Msxml2.XMLHttp.6.0")
@@ -90,13 +90,13 @@ if found = true then
   Select Case Input
   Case "1" 'DHCP
     'DHCP aktivieren
-    objShell.Run "netsh interface ipv4 set address " & Adapter & " dhcp", 0, True
+    objShell.Run "netsh interface ipv4 set address """ & Adapter & """ dhcp", 0, True
     MsgBox "DHCP Eingestellt.",0,"IP-Adresse"
   Case "2" 'Diverse Feste IP's setzen
-    objShell.Run "netsh interface ipv4 set address " & Adapter & " static 192.168.100.20 255.255.255.0", 0, True
-    objShell.Run "netsh interface ipv4 add address " & Adapter & " 193.46.5.183 255.255.255.0", 0, True
-    objShell.Run "netsh interface ipv4 add address " & Adapter & " 193.46.6.183 255.255.255.0", 0, True
-    objShell.Run "netsh interface ipv4 add address " & Adapter & " 192.168.0.2 255.255.255.0", 0, True
+    objShell.Run "netsh interface ipv4 set address """ & Adapter & """ static 192.168.100.20 255.255.255.0", 0, True
+    objShell.Run "netsh interface ipv4 add address """ & Adapter & """ 193.46.5.183 255.255.255.0", 0, True
+    objShell.Run "netsh interface ipv4 add address """ & Adapter & """ 193.46.6.183 255.255.255.0", 0, True
+    objShell.Run "netsh interface ipv4 add address """ & Adapter & """ 192.168.0.2 255.255.255.0", 0, True
     MsgBox "Folgende IP Adressen wurden festgelegt:" & VbCRLF & VbCRLF & _
     "192.168.100.20 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
     "193.46.5.183 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
@@ -104,7 +104,7 @@ if found = true then
     "192.168.0.2 255.255.255.0 (Visualisierung MCU)",0,"IP-Adresse"
   Case "3" 'Langer & Laumann Tuerautomatik
     'Feste IP's setzen
-    objShell.Run "netsh interface ipv4 set address " & Adapter & " static 172.16.1.151 255.255.255.0", 0, True
+    objShell.Run "netsh interface ipv4 set address """ & Adapter & """ static 172.16.1.151 255.255.255.0", 0, True
     MsgBox "Die IP fuer die Tuerautomaktik wurde festgelegt."&VbCRLF&_
     "Das Webinterface wird jetzt gestartet. Eventuell muessen noch die Proxyeinstellungen angepasst werden.",0,"IP-Adresse"
     'InternetExplorer starten und zum Webinterface navigieren.
@@ -119,7 +119,7 @@ if found = true then
       "z.B. 255.255.255.0","IP-Adresse","255.255.255.0")
       If ipregex.Test( SubNM ) Then
         'Manuelle IP setzen
-        objShell.Run "netsh interface ipv4 set address " & Adapter & " static " & IP & " " & SUBMN, 0, True
+        objShell.Run "netsh interface ipv4 set address """ & Adapter & """ static " & IP & " " & SUBMN, 0, True
         MsgBox "Die IP " & IP & " und die Subnetzmaske " & SubNM & " wurden festgelegt.",0,"IP-Adresse"
       Else
         MsgBox "Ungueltige Subnetzmaske!",0,"IP-Adresse"
