@@ -1,5 +1,5 @@
 Version = "2.00"
-'V1.06 Netzwerkadapter in Anführungszeichen setzten.
+'V2.00 Proxy Einstellungen.
 On Error Resume Next
 
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
