@@ -3,8 +3,8 @@ Version = "2.00"
 On Error Resume Next
 
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
-Set objReq = CreateObject("Msxml2.XMLHttp.6.0")
-objReq.setTimouts(5,5,5,5)
+Set objReq = CreateObject("Msxml2.ServerXMLHttp.6.0")
+objReq.setTimouts 5000,5000,5000,5000
 objReq.open "GET", url, False
 objReq.send
 If objReq.Status = 200 Then
