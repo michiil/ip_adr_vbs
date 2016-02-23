@@ -56,7 +56,7 @@ Function SetNic()
   for n = 1 to ubound(NicArray)
     NicList = NicList & n & " = " & NicArray(n) & VbCrLf
   Next
-  NicNr=InputBox("Adapter waehlen:" & VbCrLf & VbCrLf & text,"IP-Adresse")
+  NicNr=InputBox("Adapter waehlen:" & VbCrLf & VbCrLf & NicList,"IP-Adresse")
   If (CInt(NicNr) > CInt(UBound(NicArray))) OR (CInt(NicNr) < 1) Then
     MsgBox "Ungueltige Eingabe!",0,"IP-Adresse"
   Else
