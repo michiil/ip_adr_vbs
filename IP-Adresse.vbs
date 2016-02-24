@@ -1,10 +1,10 @@
-Version = "2.00"
-'V2.00 Proxy Einstellungen.
+Version = "2.01"
+'V2.01 Updater verbessert; Div Fehler korrekturen
 On Error Resume Next
-
+SetLocale(1033)
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
 Set objReq = CreateObject("Msxml2.ServerXMLHttp.6.0")
-objReq.setTimouts 5000,5000,5000,5000
+objReq.setTimeouts 5000,5000,5000,5000
 objReq.open "GET", url, False
 objReq.send
 If objReq.Status = 200 Then
@@ -14,7 +14,9 @@ If objReq.Status = 200 Then
   Set objTextFile = objFSO.OpenTextFile(MyOwn, 1) '1 = For Reading
   ArrLocal = Split(objTextFile.ReadAll, vbCrLf)
   objTextFile.Close
-  If ArrGit(0) <> ArrLocal(0) Then
+  VerLocal = Split(ArrLocal(0),"""")
+  VerGit = Split(ArrGit(0),"""")
+  If CSng(VerGit(1)) > CSng(VerLocal(1)) Then
     Set objTextFile = objFSO.OpenTextFile(MyOwn, 2) '2 = For Writing
     objTextFile.Write (Join(ArrGit, vbCrLf))
     objTextFile.Close
@@ -65,7 +67,7 @@ Function SetNic()
     Set objTextFile = objFSO.OpenTextFile(MyOwn, 1)
     ArrAllText = Split(objTextFile.ReadAll, vbCrLf)
     objTextFile.Close
-    ArrAllText(25) = "Nic = """ & NicArray(NicNr) & """"
+    ArrAllText(27) = "Nic = """ & NicArray(NicNr) & """"
     Set objTextFile = objFSO.OpenTextFile(MyOwn, 2)
     objTextFile.Write (Join(ArrAllText, vbCrLf))
     objTextFile.Close
@@ -149,6 +151,7 @@ next
 If Not NicFound = true then
   MsgBox "Der gewaelte Adapter """ & Nic & """ existiert nicht! Bitte neuen waehlen.",0,"IP-Adresse"
   call SetNic()
+  WScript.Quit
 End If
 
 Input=InputBox("Was soll gemacht werden?" & VbCRLF & VbCRLF & _
@@ -208,7 +211,6 @@ Case "4"
     SubNM=InputBox("Subnetzmaske Eingeben:" & VbCRLF & VbCRLF & _
     "z.B. 255.255.255.0","IP-Adresse","255.255.255.0")
     If IpRegex.Test( SubNM ) Then
-      'Manuelle IP setzen
       objShell.Run "netsh interface ipv4 set address """ & Nic & """ static " & IP & " " & SUBMN, 0, True
       MsgBox "Die IP " & IP & " und die Subnetzmaske " & SubNM & " wurden festgelegt.",0,"IP-Adresse"
     Else
@@ -219,7 +221,7 @@ Case "4"
   End If
 Case "5"
   call SetNic()
-Case "6" 'Proyeinstellungen.
+Case "6"
   proxyreturn = proxy("return",0,0)
   ProxySet=InputBox("Die momentanen Einstellungen sind:" & VbCRLF & VbCRLF & _
   proxyreturn & VbCRLF & VbCRLF & _
