@@ -1,23 +1,31 @@
-Version = "2.01"
+Version = "2.02"
+'V2.02 Updater Verbessert
 On Error Resume Next
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/WZV-Excel.vbs"
-Set objReq = CreateObject("Msxml2.XMLHttp.6.0")
+Set objReq = CreateObject("Msxml2.ServerXMLHttp.6.0")
+objReq.setTimeouts 500,500,500,500
 objReq.open "GET", url, False
 objReq.send
-If objReq.Status = 200 Then
-  ArrGit = Split(objReq.responseText, vbLf)
-  MyOwn = Wscript.ScriptFullName
-  Set objFSO = CreateObject("Scripting.FileSystemObject")
-  Set objTextFile = objFSO.OpenTextFile(MyOwn, 1) '1 = For Reading
-  ArrLocal = Split(objTextFile.ReadAll, vbCrLf)
-  objTextFile.Close
-  If ArrGit(0) <> ArrLocal(0) Then
-    Set objTextFile = objFSO.OpenTextFile(MyOwn, 2) '2 = For Writing
-    objTextFile.Write (Join(ArrGit, vbCrLf))
+If Err.Number = 0 Then
+  If objReq.Status = 200 Then
+    ArrGit = Split(objReq.responseText, vbLf)
+    MyOwn = Wscript.ScriptFullName
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+    Set objTextFile = objFSO.OpenTextFile(MyOwn, 1) '1 = For Reading
+    ArrLocal = Split(objTextFile.ReadAll, vbCrLf)
     objTextFile.Close
-    MsgBox "Update durchgefuehrt! Bitte neu starten."
-    WScript.Quit
+    VerLocal = Split(ArrLocal(0),"""")
+    VerGit = Split(ArrGit(0),"""")
+    If CSng(VerGit(1)) > CSng(VerLocal(1)) Then
+      Set objTextFile = objFSO.OpenTextFile(MyOwn, 2) '2 = For Writing
+      objTextFile.Write (Join(ArrGit, vbCrLf))
+      objTextFile.Close
+      MsgBox "Update durchgefuehrt! Bitte neu starten." & VbCRLF & ArrGit(1)
+      WScript.Quit
+    End If
   End If
+Else
+  Err.Clear
 End If
 
 If WScript.Arguments.Count = 0 Then
