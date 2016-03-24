@@ -1,7 +1,7 @@
 VBS Scripts
 -----------
 
-Diverse VBS Scripts.
+Diverse VB-Scripts.
 
 **IP-Adresse.vbs**
 
