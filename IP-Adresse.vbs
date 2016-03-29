@@ -1,5 +1,5 @@
-Version = "2.02"
-'V2.02 Updater gefixed
+Version = "2.03"
+'V2.03 Ethernet Neustart hinzugefuegt
 On Error Resume Next
 SetLocale(1033)
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
@@ -166,6 +166,7 @@ Input=InputBox("Was soll gemacht werden?" & VbCRLF & VbCRLF & _
 "5 = Netzwerkadapter aendern" & VbCRLF & _
 "      (aktuell = " & Nic & ")" & VbCRLF & _
 "6 = Proxyeinstellungen" & VbCRLF & _
+"7 = Ethernet Neustart (fuer 828D)" & VbCRLF & _
 "9 = Info" & VbCRLF,"IP-Adresse")
 Select Case Input
 Case "1"
@@ -241,6 +242,9 @@ Case "6"
   Case "3"
     call proxy("auto",2,0)
   End Select
+Case "7"
+  objShell.Run "netsh interface set interface """ & Nic & """ disabled", 0, True
+  objShell.Run "netsh interface set interface """ & Nic & """ enabled", 0, True
 Case "9"
   MsgBox "IP-Adressen Script by Michi Lehenauer" & VbCRLF & _
   "Version " & Version,0,""
