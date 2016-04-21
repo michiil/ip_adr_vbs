@@ -1,5 +1,5 @@
-Version = "2.03"
-'V2.03 Ethernet Neustart hinzugefuegt
+Version = "3.00"
+'V3.00 Neue Programm strukturierung
 On Error Resume Next
 SetLocale(1033)
 url = "https://raw.githubusercontent.com/michiil/vbs_scrips/master/IP-Adresse.vbs"
@@ -32,7 +32,7 @@ End If
 Nic = "LAN-Verbindung"
 
 Set objIE = CreateObject("InternetExplorer.Application")
-Set objShell = WScript.CreateObject("WScript.Shell")
+Set objShell = CreateObject("WScript.Shell")
 Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
 Set colItems = objWMIService.ExecQuery("Select * from Win32_NetworkAdapter")
 
@@ -50,13 +50,11 @@ With IpPortRegex
   .Global     = False
 End With
 
-ReDim NicArray(0)
-For Each objItem in colItems
-  If Len(objItem.NetConnectionID) Then
-    ReDim Preserve NicArray (UBound(NicArray) + 1)
-    NicArray(UBound(NicArray)) = objItem.NetConnectionID
-  End If
-Next
+' ███████ ███████ ████████ ███    ██ ██  ██████
+' ██      ██         ██    ████   ██ ██ ██
+' ███████ █████      ██    ██ ██  ██ ██ ██
+'      ██ ██         ██    ██  ██ ██ ██ ██
+' ███████ ███████    ██    ██   ████ ██  ██████
 
 Function SetNic()
   for n = 1 to ubound(NicArray)
@@ -76,8 +74,38 @@ Function SetNic()
     objTextFile.Write (Join(ArrAllText, vbCrLf))
     objTextFile.Close
     MsgBox "Adapter wurde auf " & NicArray(NicNr) & " geaendert",0,"IP-Adresse"
+    Nic = NicArray(NicNr)
   End if
 End Function
+
+'  ██████ ██   ██ ███████  ██████ ██   ██ ███    ██ ██  ██████
+' ██      ██   ██ ██      ██      ██  ██  ████   ██ ██ ██
+' ██      ███████ █████   ██      █████   ██ ██  ██ ██ ██
+' ██      ██   ██ ██      ██      ██  ██  ██  ██ ██ ██ ██
+'  ██████ ██   ██ ███████  ██████ ██   ██ ██   ████ ██  ██████
+
+ReDim NicArray(0)
+For Each objItem in colItems
+  If Len(objItem.NetConnectionID) Then
+    ReDim Preserve NicArray (UBound(NicArray) + 1)
+    NicArray(UBound(NicArray)) = objItem.NetConnectionID
+  End If
+Next
+For n = 0 to ubound(NicArray)
+  If NicArray(n) = Nic then
+    NicFound = true
+  End If
+Next
+If Not NicFound = true then
+  MsgBox "Der gewaelte Adapter """ & Nic & """ existiert nicht! Bitte neuen waehlen.",0,"IP-Adresse"
+  call SetNic()
+End If
+
+' ██████  ██████   ██████  ██   ██ ██    ██
+' ██   ██ ██   ██ ██    ██  ██ ██   ██  ██
+' ██████  ██████  ██    ██   ███     ████
+' ██      ██   ██ ██    ██  ██ ██     ██
+' ██      ██   ██  ██████  ██   ██    ██
 
 Function proxy(task, switch, quiet)
   proxysvr=objShell.RegRead("HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ProxyServer")
@@ -92,71 +120,126 @@ Function proxy(task, switch, quiet)
   Case "auto"
     If switch = autoproxy Then
       If Not quiet = 1 Then
-        MsgBox "Autoproxy ist schon auf " & autoproxy,0,"Proxyeinstellungen"
+        MsgBox "Autoproxy ist schon auf " & autoproxy,0,"IP-Adresse"
       End If
       Exit Function
     End If
     If ((autoproxy = 0) And ((switch = 1) Or (switch = 2))) Then
       objShell.RegWrite "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\AutoDetect", 1, "REG_DWORD"
       If Not quiet = 1 Then
-        MsgBox "Automatische Proxykonfiguration Eingeschaltet!" & VbCRLF & _
-        "Aenderung wird beim naechsten Start von IE wirksam.",0,"Proxyeinstellungen"
+        GoOn = MsgBox("Automatische Proxykonfiguration Eingeschaltet!" & VbCRLF & _
+        "Aenderung wird beim naechsten Start von IE wirksam." & VbCRLF & _
+        "Noch was aendern?",260,"IP-Adresse")
+        If GoOn = 6 Then
+          call proxy("ask",0,0)
+        End If
       End If
     ElseIf ((autoproxy = 1) And ((switch = 0) Or (switch = 2))) Then
       objShell.RegWrite "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\AutoDetect", 0, "REG_DWORD"
       If Not quiet = 1 Then
-        MsgBox "Automatische Proxykonfiguration Ausgeschaltet!" & VbCRLF & _
-        "Aenderung wird beim naechsten Start von IE wirksam.",0,"Proxyeinstellungen"
+        GoOn = MsgBox("Automatische Proxykonfiguration Ausgeschaltet!" & VbCRLF & _
+        "Aenderung wird beim naechsten Start von IE wirksam." & VbCRLF & _
+        "Noch was aendern?",260,"IP-Adresse")
+        If GoOn = 6 Then
+          call proxy("ask",0,0)
+        End If
       End If
     Else
-      MsgBox "Error!",0,"Proxyeinstellungen"
+      MsgBox "Error!",0,"IP-Adresse"
     End If
   Case "proxy"
     If switch = proxyenable Then
       If Not quiet = 1 Then
-        MsgBox "Proxy ist schon auf " & proxyenable,0,"Proxyeinstellungen"
+        MsgBox "Proxy ist schon auf " & proxyenable,0,"IP-Adresse"
       End If
       Exit Function
     End If
     If ((proxyenable = 0) And ((switch = 1) Or (switch = 2))) Then
       objShell.RegWrite "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ProxyEnable", 1, "REG_DWORD"
       If Not quiet = 1 Then
-        MsgBox "Proxy Eingeschaltet!",0,"Proxyeinstellungen"
+        GoOn = MsgBox("Proxy Eingeschaltet!" & VbCRLF & _
+        "Noch was aendern?",260,"IP-Adresse")
+        If GoOn = 6 Then
+          call proxy("ask",0,0)
+        End If
       End If
     ElseIf ((proxyenable = 1) And ((switch = 0) Or (switch = 2))) Then
       objShell.RegWrite "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ProxyEnable", 0, "REG_DWORD"
       If Not quiet = 1 Then
-        MsgBox "Proxy Ausgeschaltet!",0,"Proxyeinstellungen"
+        GoOn = MsgBox("Proxy Ausgeschaltet!" & VbCRLF & _
+        "Noch was aendern?",260,"IP-Adresse")
+        If GoOn = 6 Then
+          call proxy("ask",0,0)
+        End If
       End If
     Else
-      MsgBox "Error!",0,"Proxyeinstellungen"
+      MsgBox "Error!",0,"IP-Adresse"
     End If
   Case "proxysvr"
     NewProxy=Inputbox("Neuen Proxyserver mit Port eingeben:" & VbCRLF & _
-    "(z.B. 192.164.2.20:8080)","Proxyeinstellungen")
+    "(z.B. 192.164.2.20:8080)","IP-Adresse")
     If IpPortRegex.Test( NewProxy ) Then
       objShell.RegWrite "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ProxyServer", NewProxy, "REG_SZ"
-      MsgBox "Proxyserver wurde auf " & NewProxy & " geaendert!",0,"Proxyeinstellungen"
+      GoOn = MsgBox("Proxyserver wurde auf " & NewProxy & " geaendert!" & VbCRLF & _
+      "Noch was aendern?",260,"IP-Adresse")
+      If GoOn = 6 Then
+        call proxy("ask",0,0)
+      End If
     Else
       MsgBox "Ungueltiges Eingabeformat!",0,"IP-Adresse"
     End If
-  Case "return"
-    proxy="Proxyserver:                " & proxysvr & VbCRLF & _
+  Case "ask"
+    ProxySet=InputBox("Die momentanen Einstellungen sind:" & VbCRLF & VbCRLF & _
+    "Proxyserver:                " & proxysvr & VbCRLF & _
     "Proxy:                          " & proxyenable & VbCRLF & _
-    "Automatische Proxy:    " & autoproxy
+    "Automatische Proxy:    " & autoproxy & VbCRLF & VbCRLF & _
+    "Was soll geaendert werden?" & VbCRLF & _
+    "1 = Proxyserver" & VbCRLF & _
+    "2 = Proxy Ein- bzw. Ausschalten" & VbCRLF & _
+    "3 = Automatische Proxykonfiguration" & VbCRLF,"IP-Adresse")
+    Select Case ProxySet
+    Case "1"
+      call proxy("proxysvr",2,0)
+    Case "2"
+      call proxy("proxy",2,0)
+    Case "3"
+      call proxy("auto",2,0)
+    End Select
+  Case else
+    MsgBox "error proxy",0,"IP-Adresse"
   End Select
 End Function
 
-For n = 0 to ubound(NicArray)
-  If NicArray(n) = Nic then
-    NicFound = true
-  End If
-next
-If Not NicFound = true then
-  MsgBox "Der gewaelte Adapter """ & Nic & """ existiert nicht! Bitte neuen waehlen.",0,"IP-Adresse"
-  call SetNic()
-  WScript.Quit
-End If
+' ███████ ███████ ████████ ██ ██████
+' ██      ██         ██    ██ ██   ██
+' ███████ █████      ██    ██ ██████
+'      ██ ██         ██    ██ ██
+' ███████ ███████    ██    ██ ██
+
+Function setIP(task,IpArray)
+  Select Case task
+  Case "static"
+    objShell.Run "netsh interface ipv4 set address """ & Nic & """ static " & IpArray(0), 0, True
+    if UBound(IpArray) > 0 then
+      For n = 1 to ubound(IpArray)
+        objShell.Run "netsh interface ipv4 add address """ & Nic & """ " & IpArray(n), 0, True
+      Next
+    End If
+  Case "dhcp"
+    objShell.Run "netsh interface ipv4 set address """ & Nic & """ dhcp", 0, True
+  Case "reset"
+    objShell.Run "netsh interface set interface """ & Nic & """ disabled", 0, True
+    objShell.Run "netsh interface set interface """ & Nic & """ enabled", 0, True
+  Case else
+    MsgBox "error setIP",0,"IP-Adresse"
+  End Select
+End Function
+
+' ███    ███  █████  ██ ███    ██     ███    ███ ███████ ███    ██ ██    ██
+' ████  ████ ██   ██ ██ ████   ██     ████  ████ ██      ████   ██ ██    ██
+' ██ ████ ██ ███████ ██ ██ ██  ██     ██ ████ ██ █████   ██ ██  ██ ██    ██
+' ██  ██  ██ ██   ██ ██ ██  ██ ██     ██  ██  ██ ██      ██  ██ ██ ██    ██
+' ██      ██ ██   ██ ██ ██   ████     ██      ██ ███████ ██   ████  ██████
 
 Input=InputBox("Was soll gemacht werden?" & VbCRLF & VbCRLF & _
 "1 = DHCP (Firmennetz, Siemens -X127)" & VbCRLF & _
@@ -170,42 +253,27 @@ Input=InputBox("Was soll gemacht werden?" & VbCRLF & VbCRLF & _
 "9 = Info" & VbCRLF,"IP-Adresse")
 Select Case Input
 Case "1"
-  objShell.Run "netsh interface ipv4 set address """ & Nic & """ dhcp", 0, True
-  proxyreturn = proxy("return",0,0)
-  DHCPProxy=InputBox("DHCP Eingestellt." & VbCRLF & VbCRLF & _
-  "Momentane Proxyeinstellungen:" & VbCRLF & VbCRLF & _
-  proxyreturn & VbCRLF & VbCRLF & _
-  "1 = Proxy aktivieren" & VbCRLF & _
-  "2 = Automatische Proxykonfiguration aktivieren" & VbCRLF & _
-  "3 = Proxy aktivieren und Proxyserver bearbeiten" & VbCRLF & _
-  "Alles Andere = Nichts tun" & VbCRLF,"IP-Adresse")
-  Select Case DHCPProxy
-  Case "1"
-    call proxy("proxy",1,0)
-  Case "2"
-    call proxy("auto",1,0)
-  Case "3"
-    call proxy("proxysvr",0,0)
-    call proxy("proxy",1,0)
-  End Select
+  call setIP("dhcp",0)
+  DHCPProxy=MsgBox("DHCP Eingestellt." & VbCRLF & VbCRLF & _
+  "Sollen die Proxyeinstellungen geaendert werden?",4,"IP-Adresse")
+  If DHCPProxy = 6 Then
+    call proxy("ask",0,0)
+  End If
 Case "2"
-  objShell.Run "netsh interface ipv4 set address """ & Nic & """ static 192.168.100.20 255.255.255.0", 0, True
-  objShell.Run "netsh interface ipv4 add address """ & Nic & """ 193.46.5.183 255.255.255.0", 0, True
-  objShell.Run "netsh interface ipv4 add address """ & Nic & """ 193.46.6.183 255.255.255.0", 0, True
-  objShell.Run "netsh interface ipv4 add address """ & Nic & """ 192.168.0.2 255.255.255.0", 0, True
+  call setIP("static",Array("192.168.100.20 255.255.255.0","193.46.5.183 255.255.255.0","193.46.6.183 255.255.255.0","192.168.0.2 255.255.255.0"))
   MsgBox "Folgende IP Adressen wurden festgelegt:" & VbCRLF & VbCRLF & _
   "192.168.100.20 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
   "193.46.5.183 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
   "193.46.6.183 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
   "192.168.0.2 255.255.255.0 (Visualisierung MCU)",0,"IP-Adresse"
 Case "3"
-  objShell.Run "netsh interface ipv4 set address """ & Nic & """ static 172.16.1.151 255.255.255.0", 0, True
+  call setIP("static",Array("172.16.1.151 255.255.255.0"))
   LLProxy=MsgBox("Die IP fuer die Tuerautomaktik wurde festgelegt." & VbCRLF & _
   "Das Webinterface wird jetzt gestartet. Soll noch die Proxy deaktiviert werden?",4,"IP-Adresse")
   If LLProxy = 6 Then
     call proxy("proxy",0,1)
     call proxy("auto",0,1)
-    WScript.Sleep 1000
+    WScript.Sleep 1500
   End If
   objIE.Visible = 1
   objIE.Navigate "http://172.16.1.150/"
@@ -216,8 +284,12 @@ Case "4"
     SubNM=InputBox("Subnetzmaske Eingeben:" & VbCRLF & VbCRLF & _
     "z.B. 255.255.255.0","IP-Adresse","255.255.255.0")
     If IpRegex.Test( SubNM ) Then
-      objShell.Run "netsh interface ipv4 set address """ & Nic & """ static " & IP & " " & SUBMN, 0, True
-      MsgBox "Die IP " & IP & " und die Subnetzmaske " & SubNM & " wurden festgelegt.",0,"IP-Adresse"
+      call setIP("static",Array(IP & " " & SUBMN))
+      ManProxy=MsgBox("Die IP " & IP & " und die Subnetzmaske " & SubNM & " wurden festgelegt." & VbCRLF & VbCRLF & _
+      "Sollen die Proxyeinstellungen geaendert werden?",4,"IP-Adresse")
+      If ManProxy = 6 Then
+        call proxy("ask",0,0)
+      End If
     Else
       MsgBox "Ungueltige Subnetzmaske!",0,"IP-Adresse"
     End If
@@ -227,29 +299,13 @@ Case "4"
 Case "5"
   call SetNic()
 Case "6"
-  proxyreturn = proxy("return",0,0)
-  ProxySet=InputBox("Die momentanen Einstellungen sind:" & VbCRLF & VbCRLF & _
-  proxyreturn & VbCRLF & VbCRLF & _
-  "Was soll geaendert werden?" & VbCRLF & _
-  "1 = Proxyserver" & VbCRLF & _
-  "2 = Proxy Ein- bzw. Ausschalten" & VbCRLF & _
-  "3 = Automatische Proxykonfiguration" & VbCRLF,"Proxyeinstellungen")
-  Select Case ProxySet
-  Case "1"
-    call proxy("proxysvr",2,0)
-  Case "2"
-    call proxy("proxy",2,0)
-  Case "3"
-    call proxy("auto",2,0)
-  End Select
+  call proxy("ask",0,0)
 Case "7"
-  objShell.Run "netsh interface set interface """ & Nic & """ disabled", 0, True
-  objShell.Run "netsh interface set interface """ & Nic & """ enabled", 0, True
+  call setIP("reset",0)
 Case "9"
   MsgBox "IP-Adressen Script by Michi Lehenauer" & VbCRLF & _
   "Version " & Version,0,""
 Case ""
-  MsgBox "Abgebrochen!",0,"IP-Adresse"
 Case else
   MsgBox "Ungueltige Eingabe!",0,"IP-Adresse"
 End Select
