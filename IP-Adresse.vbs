@@ -83,7 +83,7 @@ Function proxy(task, switch, quiet)
   proxysvr=objShell.RegRead("HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ProxyServer")
   proxyenable=objShell.RegRead("HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ProxyEnable")
   proxyreg=objShell.RegRead("HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections\DefaultConnectionSettings")
-  If proxyreg(8) >= 9 Then
+  If proxyreg(8) AND 2^3 Then
     autoproxy = 1
   Else
     autoproxy = 0
