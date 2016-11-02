@@ -260,11 +260,12 @@ Case "1"
     call proxy("ask",0,0)
   End If
 Case "2"
-  call setIP("static",Array("192.168.100.20 255.255.255.0","193.46.5.183 255.255.255.0","193.46.6.183 255.255.255.0","192.168.0.2 255.255.255.0"))
+  call setIP("static",Array("192.168.100.20 255.255.255.0","193.46.5.183 255.255.255.0","193.46.6.183 255.255.255.0","192.168.0.2 255.255.255.0","192.168.214.30 255.255.255.0"))
   MsgBox "Folgende IP Adressen wurden festgelegt:" & VbCRLF & VbCRLF & _
   "192.168.100.20 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
   "193.46.5.183 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
   "193.46.6.183 255.255.255.0 (Fanuc Ethernet)" & VbCRLF & _
+  "192.168.214.30 255.255.255.0 (Siemens PCU50)" & VbCRLF & _
   "192.168.0.2 255.255.255.0 (Visualisierung MCU)",0,"IP-Adresse"
 Case "3"
   call setIP("static",Array("172.16.1.151 255.255.255.0"))
